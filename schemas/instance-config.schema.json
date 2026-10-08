@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content-os.instance-config.v1",
+  "title": "Content OS local instance selector",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["instance_root"],
+  "properties": {
+    "instance_root": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Explicit path to an external private Content OS workspace. Relative values resolve from CORE_ROOT."
+    }
+  }
+}

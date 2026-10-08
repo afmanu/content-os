@@ -1,0 +1,5 @@
+interface:
+  display_name: "Radar editorial"
+  short_description: "Ejecuta una ronda de candidatas con orden explícita"
+policy:
+  allow_implicit_invocation: false

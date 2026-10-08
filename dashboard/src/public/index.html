@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>Content OS</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <main>
+      <header><p class="eyebrow">READ-ONLY CONTROL CENTER</p><h1>CONTENT OS</h1><p id="status">Loading…</p></header>
+      <section id="setup" class="setup" hidden>
+        <p class="eyebrow">INSTANCE</p>
+        <h2>SETUP REQUIRED</h2>
+        <p>No content workspace configured.</p>
+        <p>Run onboarding to create/connect a workspace.</p>
+      </section>
+      <section id="summary" hidden>
+        <h2>Workspace summary</h2>
+        <p id="identity"></p>
+        <div id="metrics" class="metrics"></div>
+      </section>
+      <section class="system"><h2>System</h2><dl id="system"></dl></section>
+    </main>
+  </body>
+</html>

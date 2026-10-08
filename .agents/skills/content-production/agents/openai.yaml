@@ -1,0 +1,5 @@
+interface:
+  display_name: "Producción editorial"
+  short_description: "Prepara el paquete audiovisual de un output YouTube"
+policy:
+  allow_implicit_invocation: false

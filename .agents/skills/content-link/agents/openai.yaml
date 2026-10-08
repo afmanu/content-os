@@ -1,0 +1,5 @@
+interface:
+  display_name: "Vincular recurso"
+  short_description: "Añade routing mínimo sin duplicar ni cambiar owner"
+policy:
+  allow_implicit_invocation: false

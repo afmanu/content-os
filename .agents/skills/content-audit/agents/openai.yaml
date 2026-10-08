@@ -1,0 +1,5 @@
+interface:
+  display_name: "Auditoría de content-os"
+  short_description: "Audita capacidades con evidencia sin reparar"
+policy:
+  allow_implicit_invocation: false

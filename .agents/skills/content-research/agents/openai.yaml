@@ -1,0 +1,5 @@
+interface:
+  display_name: "Investigación editorial"
+  short_description: "Investiga una pieza existente con evidencia documental"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,15 @@
+{
+  "schema_version": "content-os.av.synthetic-fixture.v1",
+  "synthetic": true,
+  "language_code": "zxx",
+  "audio_duration_secs": 12,
+  "words": [
+    { "id": "w001", "text": "alpha", "start": 1, "end": 1.4, "marker": { "frequency_hz": 440, "color": "#E63946" } },
+    { "id": "w002", "text": "beta", "start": 1.7, "end": 2.1, "marker": { "frequency_hz": 550, "color": "#2A9D8F" } },
+    { "id": "w003", "text": "beta", "start": 2.25, "end": 2.65, "marker": { "frequency_hz": 660, "color": "#52B788" } },
+    { "id": "w004", "text": "gamma", "start": 5, "end": 5.4, "marker": { "frequency_hz": 770, "color": "#457B9D" } },
+    { "id": "w005", "text": "delta", "start": 5.8, "end": 6.2, "marker": { "frequency_hz": 880, "color": "#F4A261" } },
+    { "id": "w006", "text": "epsilon", "start": 9, "end": 9.4, "marker": { "frequency_hz": 990, "color": "#9B5DE5" } },
+    { "id": "w007", "text": "zeta", "start": 9.8, "end": 10.2, "marker": { "frequency_hz": 1100, "color": "#00B4D8" } }
+  ]
+}

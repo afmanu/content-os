@@ -1,0 +1,5 @@
+interface:
+  display_name: "Construcción de content-os"
+  short_description: "Prepara builds manuales e incorpora o verifica evidencia"
+policy:
+  allow_implicit_invocation: false

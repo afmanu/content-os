@@ -1,0 +1,5 @@
+interface:
+  display_name: "Reutilizar output"
+  short_description: "Crea un output desde otro con trazabilidad"
+policy:
+  allow_implicit_invocation: false

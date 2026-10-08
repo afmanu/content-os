@@ -1,0 +1,5 @@
+interface:
+  display_name: "Crear output"
+  short_description: "Convierte CONTENT en una expresión de canal trazable"
+policy:
+  allow_implicit_invocation: false

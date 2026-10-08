@@ -1,0 +1,5 @@
+interface:
+  display_name: "Desarrollar idea de contenido"
+  short_description: "Convierte una idea en una candidata y decide qué necesita"
+policy:
+  allow_implicit_invocation: false

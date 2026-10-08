@@ -1,0 +1,52 @@
+{
+  "schema_version": "content-os.av.synthetic-expectation.v1",
+  "recorded_before_execution": true,
+  "fixture": "synthetic-v1",
+  "source": {
+    "duration_seconds": 12,
+    "fps": 30,
+    "width": 1280,
+    "height": 720,
+    "audio_sample_rate": 48000,
+    "word_count": 7
+  },
+  "silence_pass": {
+    "params": { "gap": 0.55, "head_pad": 0.22, "tail_pad": 0.34 },
+    "delete_ranges": [
+      { "start": 0, "end": 0.78 },
+      { "start": 2.782, "end": 4.892 },
+      { "start": 6.332, "end": 8.892 },
+      { "start": 10.54, "end": 12 }
+    ],
+    "edited_duration_seconds": 5.09
+  },
+  "repeat": {
+    "token": "beta",
+    "occurrence_to_remove": 1,
+    "occurrence_to_keep": 2,
+    "expected_intermediate_cut": { "start": 0.92, "end": 1.47 },
+    "expected_original_cut_content": { "start": 1.7, "end": 2.25 }
+  },
+  "final": {
+    "duration_seconds": 4.54,
+    "retained_word_ids": ["w001", "w003", "w004", "w005", "w006", "w007"],
+    "word_count": 6,
+    "segments": [
+      { "final": [0, 0.92], "intermediate": [0, 0.92], "original": [0.78, 1.7] },
+      { "final": [0.92, 1.452], "intermediate": [1.47, 2.002], "original": [2.25, 2.782] },
+      { "final": [1.452, 2.892], "intermediate": [2.002, 3.442], "original": [4.892, 6.332] },
+      { "final": [2.892, 4.54], "intermediate": [3.442, 5.09], "original": [8.892, 10.54] }
+    ]
+  },
+  "tolerances": {
+    "duration_seconds": 0.12,
+    "audio_video_seconds": 0.12,
+    "marker_onset_seconds": 0.12,
+    "frame_color_channel": 32
+  },
+  "non_claims": [
+    "No speech recognition is performed.",
+    "No Spanish error detection or editorial judgment is tested.",
+    "No human voice, private media or external media service is used."
+  ]
+}

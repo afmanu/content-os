@@ -1,0 +1,37 @@
+{
+  "synthetic": true,
+  "schema_version": 1,
+  "updated_at": "2030-01-01",
+  "pieces": [
+    {
+      "id": "CONTENT-900",
+      "type": "content",
+      "editorial_question": "How can a fictional team document a repeatable handoff?",
+      "working_title": "A fictional handoff example",
+      "format": null,
+      "origins": [],
+      "stage": "candidate",
+      "status": "synthetic_fixture",
+      "next_action": "A human decides whether to develop the fictional example.",
+      "blockers": [],
+      "artifacts": {},
+      "state_evidence": [],
+      "approvals": { "recording": false, "publication": false }
+    }
+  ],
+  "outputs": [
+    {
+      "output_id": "OUTPUT-900",
+      "content_id": "CONTENT-900",
+      "channel": "x",
+      "origin": "DIRECT",
+      "source_output_id": null,
+      "angle": "A fictional compact explanation",
+      "format": "short_post",
+      "promise": "Explain the fictional handoff without claiming a real result.",
+      "status": "synthetic_fixture",
+      "artifact": "outputs/OUTPUT-900/OUTPUT.md",
+      "review_status": null
+    }
+  ]
+}

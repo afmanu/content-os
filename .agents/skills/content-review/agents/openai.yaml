@@ -1,0 +1,5 @@
+interface:
+  display_name: "Revisión de resultados"
+  short_description: "Revisa evidencia de un output o content agregado"
+policy:
+  allow_implicit_invocation: false

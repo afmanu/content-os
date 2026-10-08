@@ -1,0 +1,5 @@
+interface:
+  display_name: "Postproducción de contenido"
+  short_description: "Edita grabaciones de un output audiovisual"
+policy:
+  allow_implicit_invocation: false

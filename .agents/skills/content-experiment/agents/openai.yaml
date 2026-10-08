@@ -1,0 +1,5 @@
+interface:
+  display_name: "Pruebas de content-os"
+  short_description: "Prepara o ejecuta pruebas controladas para obtener evidencia"
+policy:
+  allow_implicit_invocation: false

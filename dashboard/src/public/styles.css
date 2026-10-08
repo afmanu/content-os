@@ -1,0 +1,17 @@
+:root { color: #17201c; background: #edf1ec; font-family: ui-sans-serif, system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+main { width: min(980px, calc(100% - 32px)); margin: 0 auto; padding: 72px 0; }
+header { margin-bottom: 40px; }
+h1 { margin: 4px 0 10px; font-size: clamp(42px, 8vw, 84px); letter-spacing: -.06em; }
+h2 { margin-top: 0; }
+p { line-height: 1.55; }
+.eyebrow { color: #557065; font-size: 12px; font-weight: 750; letter-spacing: .16em; }
+.setup, .system, #summary { background: #fff; border: 1px solid #d7ded9; border-radius: 18px; padding: 28px; margin-bottom: 20px; box-shadow: 0 12px 40px rgba(36, 53, 45, .06); }
+.setup { border-left: 5px solid #b7772d; }
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+.metrics article { background: #f4f6f3; border-radius: 12px; padding: 18px; display: grid; gap: 8px; }
+.metrics span, dt { color: #5f7068; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+.metrics strong { font-size: 30px; }
+dl { display: grid; grid-template-columns: minmax(120px, 180px) 1fr; gap: 10px; margin: 0; }
+dd { margin: 0; font-weight: 700; }

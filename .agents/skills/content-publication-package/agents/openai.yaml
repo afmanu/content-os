@@ -1,0 +1,5 @@
+interface:
+  display_name: "Paquete de publicación"
+  short_description: "Empaqueta un output YouTube sin publicarlo"
+policy:
+  allow_implicit_invocation: false

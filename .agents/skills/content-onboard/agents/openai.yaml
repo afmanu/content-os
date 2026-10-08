@@ -1,0 +1,5 @@
+interface:
+  display_name: "Configurar Content OS"
+  short_description: "Crea o actualiza una instancia privada verificable"
+policy:
+  allow_implicit_invocation: false

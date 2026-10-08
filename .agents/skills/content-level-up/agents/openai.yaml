@@ -1,0 +1,5 @@
+interface:
+  display_name: "Mejora de content-os"
+  short_description: "Propone y aplica mejoras pequeñas con aprobación humana"
+policy:
+  allow_implicit_invocation: false

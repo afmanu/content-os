@@ -1,0 +1,5 @@
+interface:
+  display_name: "Estado de content-os"
+  short_description: "Consulta piezas, bloqueos y próximos pasos sin cambios"
+policy:
+  allow_implicit_invocation: false

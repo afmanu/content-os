@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "status": "NOT_CONFIGURED",
+  "available_channels": ["youtube", "linkedin", "x"],
+  "active_channels": []
+}
