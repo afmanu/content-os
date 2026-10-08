@@ -6,6 +6,8 @@ import { pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { CORE_ROOT } from "./instance-resolver.mjs";
+import { scanDistribution } from "./privacy-scan.mjs";
+import { validateRepository } from "./validate-content-os.mjs";
 
 const NOW = "2032-03-04T05:06:07.000Z";
 const LIVE_ROOTS = new Set(["state", "ideas", "lab", "research", "radar", "audits", "outputs", "postproduction"]);
@@ -29,6 +31,65 @@ function copyCandidate(source, target) {
     },
   });
 }
+
+function runGit(root, ...args) {
+  const result = spawnSync("git", ["-C", root, "-c", "user.name=Synthetic Fixture", "-c", "user.email=synthetic.invalid", "-c", "commit.gpgsign=false", ...args], { encoding: "utf8", windowsHide: true });
+  assert.equal(result.status, 0, result.stderr);
+  return result.stdout.trim();
+}
+
+for (const fixture of [
+  { name: "no .git", git: false, remotes: [] },
+  { name: "local Git without remotes", git: true, remotes: [] },
+  { name: "normal origin", git: true, remotes: ["origin"] },
+  { name: "origin and upstream", git: true, remotes: ["origin", "upstream"] },
+]) {
+  test(`validator accepts ${fixture.name} without changing instance or operational semantics`, () => {
+    const parent = mkdtempSync(join(tmpdir(), "content-os-git-fictional-"));
+    const candidateRoot = join(parent, "content-os");
+    try {
+      copyCandidate(CORE_ROOT, candidateRoot);
+      const expected = validateRepository({ coreRoot: candidateRoot, env: {} });
+      if (fixture.git) {
+        runGit(candidateRoot, "init");
+        runGit(candidateRoot, "commit", "--allow-empty", "-m", "Synthetic initial commit");
+        runGit(candidateRoot, "commit", "--allow-empty", "-m", "Synthetic development commit");
+        for (const remote of fixture.remotes) runGit(candidateRoot, "remote", "add", remote, `https://example.invalid/${remote}/content-os.git`);
+        assert.equal(runGit(candidateRoot, "rev-list", "--count", "--all"), "2");
+        assert.deepEqual(runGit(candidateRoot, "remote").split(/\r?\n/).filter(Boolean), fixture.remotes);
+      }
+      const result = validateRepository({ coreRoot: candidateRoot, env: {} });
+      assert.equal(result.core.status, "PASS");
+      assert.ok(result.core.checks.every((check) => check.status === "PASS"));
+      assert.deepEqual(result, expected);
+    } finally {
+      rmSync(parent, { recursive: true, force: true });
+    }
+    assert.equal(existsSync(parent), false);
+  });
+}
+
+test("normal remotes do not hide existing structure or privacy defects", () => {
+  const parent = mkdtempSync(join(tmpdir(), "content-os-git-defects-fictional-"));
+  const candidateRoot = join(parent, "content-os");
+  try {
+    copyCandidate(CORE_ROOT, candidateRoot);
+    runGit(candidateRoot, "init");
+    runGit(candidateRoot, "remote", "add", "origin", "https://example.invalid/content-os.git");
+    write(join(candidateRoot, "state", "pieces.json"), "{}\n");
+    write(join(candidateRoot, "synthetic-sensitive.txt"), `${["api", "key"].join("_")}: fictional-placeholder\n`);
+    const result = validateRepository({ coreRoot: candidateRoot, env: {} });
+    assert.equal(result.core.status, "FAIL");
+    assert.equal(result.core.checks.find((check) => check.id === "core.no_live_instance").status, "FAIL");
+    const privacy = scanDistribution(candidateRoot);
+    assert.equal(privacy.status, "FAIL");
+    assert.ok(privacy.findings.some((finding) => finding.code === "FORBIDDEN_ROOT" && finding.path === "state"));
+    assert.ok(privacy.findings.some((finding) => finding.code === "DENYLIST_MATCH" && finding.path === "synthetic-sensitive.txt"));
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
+  assert.equal(existsSync(parent), false);
+});
 
 function runtimeFiles(root) {
   const files = [];
@@ -63,7 +124,7 @@ async function readHttpView(server) {
   return response.json();
 }
 
-test("filesystem release candidate works from a clean temporary copy in three validator/dashboard states", async () => {
+async function verifyReleaseCandidate(withOrigin) {
   const parent = mkdtempSync(join(tmpdir(), "content-os-release-fictional-"));
   const candidateRoot = join(parent, "content-os");
   const instanceRoot = join(parent, "alex-workspace");
@@ -71,8 +132,19 @@ test("filesystem release candidate works from a clean temporary copy in three va
   const configPath = join(candidateRoot, ".content-os.local.json");
   let server;
   try {
-    copyCandidate(CORE_ROOT, candidateRoot);
-    assert.equal(existsSync(join(candidateRoot, ".git")), false);
+    if (withOrigin) {
+      const seedRoot = join(parent, "synthetic-source");
+      copyCandidate(CORE_ROOT, seedRoot);
+      runGit(seedRoot, "init");
+      runGit(seedRoot, "add", "--all");
+      runGit(seedRoot, "commit", "-m", "Synthetic initial commit");
+      runGit(seedRoot, "commit", "--allow-empty", "-m", "Synthetic development commit");
+      runGit(parent, "clone", "--no-hardlinks", "--", seedRoot, candidateRoot);
+      runGit(candidateRoot, "remote", "set-url", "origin", "https://example.invalid/content-os.git");
+      assert.equal(runGit(candidateRoot, "remote", "get-url", "origin"), "https://example.invalid/content-os.git");
+      assert.equal(runGit(candidateRoot, "rev-list", "--count", "--all"), "2");
+    } else copyCandidate(CORE_ROOT, candidateRoot);
+    assert.equal(existsSync(join(candidateRoot, ".git")), withOrigin);
     assertLocalRuntime(candidateRoot);
 
     const child = spawnSync(process.execPath, [join(candidateRoot, "scripts", "validate-content-os.mjs")], {
@@ -163,6 +235,7 @@ test("filesystem release candidate works from a clean temporary copy in three va
     }, null, 2)}\n`);
 
     const populated = validationModule.validateRepository({ coreRoot: candidateRoot, env: {}, configPath });
+    assert.equal(populated.core.status, "PASS");
     assert.equal(populated.instance.status, "PASS");
     assert.equal(populated.instance.counts.content, 1);
     assert.equal(populated.instance.counts.outputs, 1);
@@ -183,4 +256,7 @@ test("filesystem release candidate works from a clean temporary copy in three va
     rmSync(parent, { recursive: true, force: true });
   }
   assert.equal(existsSync(parent), false);
-});
+}
+
+test("filesystem release candidate works in three validator/dashboard states", () => verifyReleaseCandidate(false));
+test("local synthetic clone with origin works in three validator/dashboard states", () => verifyReleaseCandidate(true));

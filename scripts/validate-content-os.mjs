@@ -1,7 +1,6 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
-import { spawnSync } from "node:child_process";
 import { CORE_ROOT, resolveInstance } from "./instance-resolver.mjs";
 
 const WORKFLOWS = [
@@ -65,30 +64,6 @@ function pathInside(root, target) {
   return value === "" || (!value.startsWith(`..${sep}`) && value !== ".." && !isAbsolute(value));
 }
 
-function validateGitBoundary(coreRoot) {
-  if (!existsSync(join(coreRoot, ".git"))) return check("core.git_boundary", "PASS", "No Git metadata is present in this filesystem copy.");
-  const run = (...args) => spawnSync("git", ["-C", coreRoot, ...args], { encoding: "utf8", windowsHide: true });
-  const top = run("rev-parse", "--show-toplevel");
-  const count = run("rev-list", "--count", "--all");
-  const parents = run("rev-list", "--parents", "--all");
-  const remotes = run("remote");
-  const commits = Number.parseInt(count.stdout.trim(), 10);
-  const history = parents.stdout.trim().split(/\r?\n/).filter(Boolean);
-  const oneRootCommit = commits === 1 && history.length === 1 && history[0].trim().split(/\s+/).length === 1;
-  const valid = top.status === 0
-    && resolve(top.stdout.trim()) === resolve(coreRoot)
-    && count.status === 0
-    && parents.status === 0
-    && remotes.status === 0
-    && remotes.stdout.trim() === ""
-    && oneRootCommit;
-  return check(
-    "core.git_boundary",
-    valid ? "PASS" : "FAIL",
-    valid ? "Release-local Git contains one root commit and no remote." : "Git metadata is not a single-root, no-remote release history.",
-  );
-}
-
 function validateCore(coreRoot) {
   const checks = [];
   const missing = CORE_REQUIRED.filter((path) => !existsSync(join(coreRoot, path)));
@@ -102,7 +77,6 @@ function validateCore(coreRoot) {
 
   const forbiddenRoots = ["state", "ideas", "lab", "research", "radar", "audits", "outputs", "postproduction"].filter((name) => existsSync(join(coreRoot, name)));
   checks.push(check("core.no_live_instance", forbiddenRoots.length ? "FAIL" : "PASS", forbiddenRoots.length ? `Live instance roots present: ${forbiddenRoots.join(", ")}` : "No live instance roots exist in CORE_ROOT."));
-  checks.push(validateGitBoundary(coreRoot));
 
   const version = existsSync(join(coreRoot, "VERSION")) ? readFileSync(join(coreRoot, "VERSION"), "utf8").trim() : "";
   checks.push(check("core.release_version", version === "0.1.0-alpha.1" ? "PASS" : "FAIL", `Release version: ${version || "missing"}.`));

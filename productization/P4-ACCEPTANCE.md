@@ -45,10 +45,35 @@ Final automated suite: `PASS` — 33 passed, 0 failed. It covers core/productiza
 
 The exercised setup, validator, onboarding, dashboard, privacy, and synthetic-test paths require no Internet access. The clean-copy child validator ran with HTTP/HTTPS/all-proxy variables directed to an unavailable loopback endpoint. This is evidence for included code paths, not packet-level proof about the operating system, Node.js, editor, or future optional modules.
 
-## Git gate
+## Initial P4 Git gate
 
-P4 may initialize Git only after the privacy, clean-copy, and test results above pass. The resulting repository must contain one new root commit, the annotated tag `v0.1.0-alpha.1`, no copied private history, no remote, and a clean tracked worktree. Remote creation, push, GitHub Release, registry publication, and website publication remain unauthorized.
+At the initial P4 execution, Git initialization required the privacy, clean-copy, and test results above to pass. The release source was required to contain one new root commit, the annotated tag `v0.1.0-alpha.1`, no copied private history, no remote, and a clean tracked worktree. These requirements describe internal release hygiene, not permanent product invariants. Remote creation, push, GitHub Release, registry publication, and website publication were not authorized by P4.
 
 ## Readiness decision
 
 `READY`: license applied; version applied; included-file provenance resolved; privacy has 0 findings; tests and clean install pass; private history is absent; and the AV optional boundary remains consistent.
+
+## P5 portability remediation — 2026-10-08
+
+P5 discovered a release portability defect: normal Git remotes were incorrectly treated as a core validation failure. Corrected before public publication.
+
+The initial P4 commit `64b433ae071e6e6ed6175f2e505d483789194358` introduced `core.git_boundary`, which enforced zero remotes and exactly one root commit in the general validator. Its filesystem clean-copy acceptance excluded `.git`, so that acceptance did not cover a normal distributed Git clone. P5 stopped before repository creation, push, or release publication.
+
+The remediation removes the Git topology check and its runtime Git invocation. A filesystem copy, local Git repository without remotes, normal clone with `origin`, and fork/development repository with `origin` plus `upstream` have the same CORE, INSTANCE, and OPERATIONAL results; multiple remotes or commits do not create a warning. Existing product structure and privacy checks remain unchanged. The dashboard consumes the validator result and needs no code change.
+
+Release preflight still checks that the local release source does not accidentally point at a private remote before public repository creation. That is a release procedure check, not a distributed product invariant.
+
+Verification after remediation:
+
+- four Git-state regression fixtures: `PASS`, including two-commit development histories;
+- clean filesystem copy and actual local synthetic clone with safe `origin`: pre-onboard, fictional onboarding, and synthetic CONTENT + OUTPUT all `PASS`;
+- structure/privacy negative fixtures: existing checks still reject live instance state in the core and synthetic credential-shaped content;
+- complete public suite: 39 passed, 0 failed;
+- dashboard check: 3 passed, 0 failed;
+- syntax checks: 18 JavaScript files passed;
+- release privacy scan: 118 files, 0 findings;
+- temporary repositories, instances, and fixtures removed after verification.
+
+The version remains `0.1.0-alpha.1`. The local annotated tag previously pointed at the initial P4 commit above; remediation preserves that commit and requires a new commit above it, followed by retargeting only the unpublished local tag to the corrected HEAD. No public history is rewritten.
+
+P5 PREFLIGHT READINESS: **READY**. Publication is not part of this remediation execution.
